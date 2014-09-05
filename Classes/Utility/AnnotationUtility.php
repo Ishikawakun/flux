@@ -60,7 +60,7 @@ class AnnotationUtility {
 			}
 			$annotations = $reflection->getTagValues($annotationName);
 		} elseif (FALSE === $propertyName) {
-			$properties = ObjectAccess::getGettablePropertyNames($sample);
+			$properties = self::getGettablePropertyNames($sample);
 			foreach ($properties as $reflectedPropertyName) {
 				if (FALSE === property_exists($className, $reflectedPropertyName)) {
 					continue;
@@ -79,6 +79,42 @@ class AnnotationUtility {
 		}
 		return $annotations;
 	}
+
+    /**
+     * Reimplementation of ObjectAccess::getGettablePropertyNames($object) without alphabetical sorting of output array
+     *
+     * Reasoning: When annotations are used to create a Flux form the creator wants some measure of control of the
+     * order of the generated items, sorting those alphabetically completely denies that. Without that sorting the
+     * reflection API orders the items in order of appearance inside the model class source code.
+     *
+     * @param object $object Object to receive property names for
+     *
+     * @throws \InvalidArgumentException
+     * @return array Array of all gettable property names
+     */
+    protected static function getGettablePropertyNames($object) {
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
+        }
+        if ($object instanceof \stdClass) {
+            $declaredPropertyNames = array_keys(get_object_vars($object));
+        } else {
+            $declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+        }
+        foreach (get_class_methods($object) as $methodName) {
+            if (is_callable(array($object, $methodName))) {
+                if (substr($methodName, 0, 2) === 'is') {
+                    $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+                }
+                if (substr($methodName, 0, 3) === 'get') {
+                    $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+                }
+            }
+        }
+        $propertyNames = array_unique($declaredPropertyNames);
+        //sort($propertyNames);
+        return $propertyNames;
+    }
 
 	/**
 	 * @param ClassReflection $reflection
