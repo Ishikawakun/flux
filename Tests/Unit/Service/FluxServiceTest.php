@@ -26,11 +26,8 @@ namespace FluidTYPO3\Flux\Service;
 
 use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
-use FluidTYPO3\Flux\Tests\Fixtures\Data\Records;
 use FluidTYPO3\Flux\Tests\Unit\AbstractTestCase;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  * @package Flux
@@ -45,6 +42,18 @@ class FluxServiceTest extends AbstractTestCase {
 		if (TRUE === in_array('FluidTYPO3\Flux\Service\FluxService', $providers)) {
 			Core::unregisterConfigurationProvider('FluidTYPO3\Flux\Service\FluxService');
 		}
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function dispatchesMessageOnInvalidPathsReturned() {
+		$className = substr(get_class($this), 0, -4);
+		$instance = $this->getMock($className, array('getDefaultViewConfigurationForExtensionKey', 'getTypoScriptSubConfiguration'));
+		$instance->expects($this->once())->method('getTypoScriptSubConfiguration')->will($this->returnValue(NULL));
+		$instance->expects($this->once())->method('getDefaultViewConfigurationForExtensionKey')->will($this->returnValue(NULL));
+		$instance->getViewConfigurationForExtensionName('Flux');
 	}
 
 	/**

@@ -24,6 +24,7 @@ namespace FluidTYPO3\Flux;
  *  This copyright notice MUST APPEAR in all copies of the script!
  *****************************************************************/
 
+use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -168,6 +169,7 @@ class Form extends Form\AbstractFormContainer implements Form\FieldContainerInte
 		$compactConfigurationToggleOn = 0 < $copy->getCompact();
 		if (($compactExtensionToggleOn || $compactConfigurationToggleOn) && 1 === count($sheets)) {
 			$dataStructArray = $copy->last()->build();
+			$dataStructArray['meta'] = array('langDisable' => 1);
 			unset($dataStructArray['ROOT']['TCEforms']);
 		} elseif (0 < count($sheets)) {
 			$dataStructArray['sheets'] = $copy->buildChildren();
@@ -339,8 +341,8 @@ class Form extends Form\AbstractFormContainer implements Form\FieldContainerInte
 	public function getDescription() {
 		$description = $this->description;
 		$translated = NULL;
+		$extensionKey = ExtensionNamingUtility::getExtensionKey($this->extensionName);
 		if (TRUE === empty($description)) {
-			$extensionKey = GeneralUtility::camelCaseToLowerCaseUnderscored($this->extensionName);
 			$relativeFilePath = $this->getLocalLanguageFileRelativePath();
 			$relativeFilePath = ltrim($relativeFilePath, '/');
 			$filePrefix = 'LLL:EXT:' . $extensionKey . '/' . $relativeFilePath;

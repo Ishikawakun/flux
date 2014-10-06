@@ -29,8 +29,6 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use FluidTYPO3\Flux\Service\WorkspacesAwareRecordService;
-use FluidTYPO3\Flux\Service\RecordService;
 
 /**
  * Flux FlexForm integration Service
@@ -211,6 +209,13 @@ class ContentService implements SingletonInterface {
 			$row['colPos'] = self::COLPOS_FLUXCONTENT;
 		}
 		$this->updateRecordInDatabase($row, NULL, $tceMain);
+		$movePlaceholder = BackendUtility::getMovePlaceholder('tt_content', $row['uid']);
+		if (FALSE !== $movePlaceholder) {
+			$movePlaceholder['tx_flux_parent'] = $row['tx_flux_parent'];
+			$movePlaceholder['tx_flux_column'] = $row['tx_flux_column'];
+			$movePlaceholder['colPos'] = $row['colPos'];
+			$this->updateRecordInDatabase($movePlaceholder, NULL, $tceMain);
+		}
 	}
 
 	/**

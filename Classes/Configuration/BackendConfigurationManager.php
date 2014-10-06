@@ -28,7 +28,6 @@ use FluidTYPO3\Flux\Service\RecordService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager as CoreBackendConfigurationManager;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Flux ConfigurationManager implementation: Backend
@@ -93,7 +92,7 @@ class BackendConfigurationManager extends CoreBackendConfigurationManager implem
 			$this->getPageIdFromPost(),
 			$this->getPageIdFromRecordIdentifiedInEditUrlArgument(),
 			$this->getPageIdFromContentObject(),
-			$this->getPageIdFromTypoScriptRecordIfOnlyOneRecordExists(),
+			TRUE === $this->recordService instanceof RecordService ? $this->getPageIdFromTypoScriptRecordIfOnlyOneRecordExists() : 0,
 		);
 	}
 

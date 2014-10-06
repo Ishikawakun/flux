@@ -26,15 +26,14 @@ namespace FluidTYPO3\Flux\Provider;
 
 use FluidTYPO3\Flux\Form;
 use FluidTYPO3\Flux\Form\Container\Grid;
-use FluidTYPO3\Flux\Provider\ProviderInterface;
 use FluidTYPO3\Flux\Tests\Fixtures\Data\Records;
 use FluidTYPO3\Flux\Tests\Fixtures\Data\Xml;
 use FluidTYPO3\Flux\Tests\Unit\AbstractTestCase;
 use FluidTYPO3\Flux\Utility\PathUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
+
 
 /**
  * @package Flux
@@ -45,29 +44,6 @@ abstract class AbstractProviderTest extends AbstractTestCase {
 	 * @var string
 	 */
 	protected $configurationProviderClassName = 'FluidTYPO3\Flux\Provider\ContentProvider';
-
-	/**
-	 * @test
-	 */
-	public function prunesEmptyFieldNodesOnRecordSave() {
-		$row = Records::$contentRecordWithoutParentAndWithoutChildren;
-		$row['pi_flexform'] = Xml::EXPECTING_FLUX_PRUNING;
-		$provider = $this->getConfigurationProviderInstance();
-		$provider->setFieldName('pi_flexform');
-		$provider->setTableName('tt_content');
-		$tceMain = GeneralUtility::makeInstance('TYPO3\CMS\Core\DataHandling\DataHandler');
-		$tceMain->datamap['tt_content'][$row['uid']]['pi_flexform']['data'] = array();
-		$provider->postProcessRecord('update', $row['uid'], $row, $tceMain);
-		$this->assertNotContains('<field index=""></field>', $row['pi_flexform']);
-	}
-
-	/**
-	 * @test
-	 */
-	public function canCallResetMethod() {
-		$provider = $this->createInstance();
-		$provider->reset();
-	}
 
 	/**
 	 * @return ProviderInterface
@@ -90,6 +66,29 @@ abstract class AbstractProviderTest extends AbstractTestCase {
 		$record = Records::$contentRecordWithoutParentAndWithoutChildren;
 		$record['pi_flexform'] = Xml::SIMPLE_FLEXFORM_SOURCE_DEFAULT_SHEET_ONE_FIELD;
 		return $record;
+	}
+
+	/**
+	 * @test
+	 */
+	public function prunesEmptyFieldNodesOnRecordSave() {
+		$row = Records::$contentRecordWithoutParentAndWithoutChildren;
+		$row['pi_flexform'] = Xml::EXPECTING_FLUX_PRUNING;
+		$provider = $this->getConfigurationProviderInstance();
+		$provider->setFieldName('pi_flexform');
+		$provider->setTableName('tt_content');
+		$tceMain = GeneralUtility::makeInstance('TYPO3\CMS\Core\DataHandling\DataHandler');
+		$tceMain->datamap['tt_content'][$row['uid']]['pi_flexform']['data'] = array();
+		$provider->postProcessRecord('update', $row['uid'], $row, $tceMain);
+		$this->assertNotContains('<field index=""></field>', $row['pi_flexform']);
+	}
+
+	/**
+	 * @test
+	 */
+	public function canCallResetMethod() {
+		$provider = $this->createInstance();
+		$provider->reset();
 	}
 
 	/**
@@ -167,6 +166,7 @@ abstract class AbstractProviderTest extends AbstractTestCase {
 		$templatePathAndFilename = $this->getAbsoluteFixtureTemplatePathAndFilename(self::FIXTURE_TEMPLATE_BASICGRID);
 		$provider = $this->getConfigurationProviderInstance();
 		ObjectAccess::setProperty($provider, 'templatePathAndFilename', $templatePathAndFilename, TRUE);
+		ObjectAccess::setProperty($provider, 'templatePaths', array(), TRUE);
 		$record = $this->getBasicRecord();
 		$form = $provider->getGrid($record);
 		$this->assertInstanceOf('FluidTYPO3\Flux\Form\Container\Grid', $form);
@@ -177,6 +177,7 @@ abstract class AbstractProviderTest extends AbstractTestCase {
 	 */
 	public function canGetTemplatePaths() {
 		$provider = $this->getConfigurationProviderInstance();
+		ObjectAccess::setProperty($provider, 'templatePaths', array(), TRUE);
 		$record = $this->getBasicRecord();
 		$paths = $provider->getTemplatePaths($record);
 		$this->assertIsArray($paths);
@@ -256,6 +257,7 @@ abstract class AbstractProviderTest extends AbstractTestCase {
 	 */
 	public function canGetTemplateVariables() {
 		$provider = $this->getConfigurationProviderInstance();
+		ObjectAccess::setProperty($provider, 'templatePaths', array(), TRUE);
 		$provider->setTemplatePathAndFilename($this->getAbsoluteFixtureTemplatePathAndFilename(self::FIXTURE_TEMPLATE_ABSOLUTELYMINIMAL));
 		$record = $this->getBasicRecord();
 		$values = $provider->getTemplateVariables($record);

@@ -10,6 +10,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3conf/ext/builder/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'core' =>
     array (
@@ -18,6 +20,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/core/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'about' =>
     array (
@@ -26,6 +30,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/about/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'aboutmodules' =>
     array (
@@ -34,6 +40,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/aboutmodules/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'adodb' =>
     array (
@@ -42,6 +50,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/adodb/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'backend' =>
     array (
@@ -50,6 +60,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/backend/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'belog' =>
     array (
@@ -58,6 +70,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/belog/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'beuser' =>
     array (
@@ -66,6 +80,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/beuser/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'cms' =>
     array (
@@ -74,6 +90,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/cms/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'context_help' =>
     array (
@@ -82,6 +100,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/context_help/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'cshmanual' =>
     array (
@@ -90,6 +110,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/cshmanual/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'css_styled_content' =>
     array (
@@ -98,6 +120,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/css_styled_content/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'dbal' =>
     array (
@@ -106,12 +130,16 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/dbal/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'documentation' =>
     array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/documentation/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'extbase' =>
     array (
@@ -120,6 +148,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/extbase/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'extensionmanager' =>
     array (
@@ -128,6 +158,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/extensionmanager/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'extra_page_cm_options' =>
     array (
@@ -136,6 +168,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/extra_page_cm_options/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'feedit' =>
     array (
@@ -144,6 +178,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/feedit/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'felogin' =>
     array (
@@ -152,6 +188,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/felogin/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'filelist' =>
     array (
@@ -160,6 +198,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/filelist/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'fluid' =>
     array (
@@ -168,6 +208,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/fluid/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'flux' =>
     array (
@@ -176,6 +218,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3conf/ext/flux/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'form' =>
     array (
@@ -184,6 +228,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/form/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'frontend' =>
     array (
@@ -192,6 +238,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/frontend/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'func' =>
     array (
@@ -200,6 +248,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/func/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'func_wizards' =>
     array (
@@ -208,6 +258,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/func_wizards/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'impexp' =>
     array (
@@ -216,6 +268,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/impexp/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'indexed_search' =>
     array (
@@ -224,6 +278,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/indexed_search/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'indexed_search_mysql' =>
     array (
@@ -232,6 +288,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/indexed_search_mysql/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'info' =>
     array (
@@ -240,6 +298,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/info/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'info_pagetsconfig' =>
     array (
@@ -248,6 +308,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/info_pagetsconfig/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'install' =>
     array (
@@ -256,6 +318,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/install/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'lang' =>
     array (
@@ -264,6 +328,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/lang/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'linkvalidator' =>
     array (
@@ -272,6 +338,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/linkvalidator/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'lowlevel' =>
     array (
@@ -280,6 +348,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/lowlevel/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'opendocs' =>
     array (
@@ -288,6 +358,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/opendocs/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'openid' =>
     array (
@@ -296,6 +368,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/openid/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'perm' =>
     array (
@@ -304,12 +378,16 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/perm/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'phpunit' =>
     array (
       'state' => 'active',
       'packagePath' => 'typo3conf/ext/phpunit/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'recordlist' =>
     array (
@@ -318,6 +396,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/recordlist/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'recycler' =>
     array (
@@ -326,6 +406,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/recycler/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'reports' =>
     array (
@@ -334,6 +416,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/reports/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'rsaauth' =>
     array (
@@ -342,6 +426,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/rsaauth/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'rtehtmlarea' =>
     array (
@@ -350,6 +436,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/rtehtmlarea/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'saltedpasswords' =>
     array (
@@ -358,6 +446,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/saltedpasswords/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'scheduler' =>
     array (
@@ -366,6 +456,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/scheduler/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'setup' =>
     array (
@@ -374,6 +466,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/setup/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'sv' =>
     array (
@@ -382,6 +476,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/sv/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'sys_action' =>
     array (
@@ -390,6 +486,8 @@ return array (
       'state' => 'inactive',
       'packagePath' => 'typo3/sysext/sys_action/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'sys_note' =>
     array (
@@ -398,6 +496,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/sys_note/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     't3editor' =>
     array (
@@ -406,6 +506,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/t3editor/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     't3skin' =>
     array (
@@ -414,6 +516,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/t3skin/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'taskcenter' =>
     array (
@@ -422,6 +526,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/taskcenter/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'tstemplate' =>
     array (
@@ -430,6 +536,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/tstemplate/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'version' =>
     array (
@@ -438,6 +546,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/version/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'viewpage' =>
     array (
@@ -446,6 +556,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/viewpage/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'wizard_crpages' =>
     array (
@@ -454,6 +566,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/wizard_crpages/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'wizard_sortpages' =>
     array (
@@ -462,6 +576,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/wizard_sortpages/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
     'workspaces' =>
     array (
@@ -470,6 +586,8 @@ return array (
       'state' => 'active',
       'packagePath' => 'typo3/sysext/workspaces/',
       'classesPath' => 'Classes/',
+      'suggestions' => array(),
+      'dependencies' => array(),
     ),
   ),
   'version' => 4,

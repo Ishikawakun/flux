@@ -26,14 +26,11 @@ namespace FluidTYPO3\Flux\Backend;
 
 use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
-use FluidTYPO3\Flux\Form\AbstractFormField;
-use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\Utility\AnnotationUtility;
 use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\Mapper\DataMapFactory;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
@@ -73,6 +70,26 @@ class TableConfigurationPostProcessor implements TableConfigurationPostProcessin
 		$objectManager->get('FluidTYPO3\Flux\Provider\ProviderResolver')->loadTypoScriptConfigurationProviderInstances();
 		$forms = Core::getRegisteredFormsForTables();
 		$models = Core::getRegisteredFormsForModelObjectClasses();
+		$packages = array_keys(Core::getRegisteredPackagesForAutoForms());
+		foreach ($packages as $packageName) {
+			list ($vendorName, $extensionName) = explode('.', $packageName);
+			$namespace = $vendorName . '\\' . $extensionName . '\\Domain\\';
+			$extensionKey = ExtensionNamingUtility::getExtensionKey($packageName);
+			$folder = ExtensionManagementUtility::extPath($extensionKey, 'Classes/Domain/Form/');
+			$files = glob($folder . '*Form.php');
+			if (FALSE === $files) {
+				continue;
+			}
+			foreach ($files as $fileName) {
+				$basename = pathinfo($fileName, PATHINFO_FILENAME);
+				$formClassName = $namespace . 'Form\\' . $basename;
+				$modelClassName = $namespace . 'Model\\' . substr($basename, 0, -4);
+				$fullTableName = $this->resolveTableName($modelClassName);
+				$models[$modelClassName] = $formClassName::create();
+				$models[$modelClassName]->setName($fullTableName);
+				$models[$modelClassName]->setExtensionName($packageName);
+			}
+		}
 		foreach ($forms as $fullTableName => $form) {
 			$this->processFormForTable($fullTableName, $form);
 		}

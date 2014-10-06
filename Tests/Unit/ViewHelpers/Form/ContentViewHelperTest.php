@@ -24,23 +24,29 @@ namespace FluidTYPO3\Flux\ViewHelpers\Form;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use FluidTYPO3\Flux\Form\Container\Grid;
 use FluidTYPO3\Flux\Tests\Unit\ViewHelpers\AbstractViewHelperTestCase;
 
 /**
  * @package Flux
  */
-class VariableViewHelperTest extends AbstractViewHelperTestCase {
+class ContentViewHelperTest extends AbstractViewHelperTestCase {
 
 	/**
 	 * @test
 	 */
-	public function addsVariableToContainer() {
-		$containerMock = $this->getMock('FluidTYPO3\Flux\Form', array('setVariable'));
-		$containerMock->expects($this->once())->method('setVariable')->with('test', 'testvalue');
-		$instance = $this->getMock($this->createInstanceClassName(), array('getContainer'));
-		$instance->expects($this->once())->method('getContainer')->will($this->returnValue($containerMock));
-		$instance->setArguments(array('name' => 'test', 'value' => 'testvalue'));
-		$instance->render();
+	public function createsGridIfNotSet() {
+		$column = $this->getMock('FluidTYPO3\\Flux\\Form\\Container\\Column', array('setName', 'setLabel'));
+		$column->expects($this->once())->method('setName');
+		$column->expects($this->once())->method('setLabel');
+		$row = $this->getMock('FluidTYPO3\\Flux\\Form\\Container\\Row', array('createContainer'));
+		$grid = $this->getMock('FluidTYPO3\\Flux\\Form\\Container\\Grid', array('createContainer'));
+		$grid->expects($this->once())->method('createContainer')->will($this->returnValue($row));
+		$row->expects($this->once())->method('createContainer')->will($this->returnValue($column));
+		$mock = $this->getMock($this->createInstanceClassName(), array('getContainer', 'getGrid'));
+		$mock->expects($this->once())->method('getContainer')->will($this->returnValue(NULL));
+		$mock->expects($this->once())->method('getGrid')->will($this->returnValue($grid));
+		$mock->render();
 	}
 
 }

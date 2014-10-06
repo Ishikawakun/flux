@@ -26,7 +26,6 @@ namespace FluidTYPO3\Flux\ViewHelpers\Be;
 
 use FluidTYPO3\Flux\Service\ContentService;
 use FluidTYPO3\Flux\Service\WorkspacesAwareRecordService;
-use FluidTYPO3\Flux\Utility\VersionUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -121,9 +120,16 @@ class ContentAreaViewHelper extends AbstractViewHelper {
 		$queryParts = $dblist->makeQueryArray('tt_content', $row['pid'], $condition);
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 		$rows = $dblist->getResult($result);
-
+		$workspaceId = (integer) $GLOBALS['BE_USER']->workspace;
 		foreach ($rows as $index => &$record) {
-			if (TRUE === VersionState::cast($record['t3ver_state'])->equals(VersionState::DELETE_PLACEHOLDER)) {
+			if (0 < $workspaceId) {
+				$workspaceRecord = BackendUtility::getWorkspaceVersionOfRecord($GLOBALS['BE_USER']->workspace, 'tt_content', $record['uid']);
+				if (FALSE !== $workspaceRecord) {
+					$record = $workspaceRecord;
+				}
+			}
+			BackendUtility::movePlhOL('tt_content', $record);
+			if (TRUE === empty($record) || TRUE === VersionState::cast($record['t3ver_state'])->equals(VersionState::DELETE_PLACEHOLDER)) {
 				unset($rows[$index]);
 			} else {
 				$record['isDisabled'] = $dblist->isDisabled('tt_content', $record);
@@ -143,4 +149,5 @@ class ContentAreaViewHelper extends AbstractViewHelper {
 
 		return $content;
 	}
+
 }

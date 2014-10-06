@@ -34,7 +34,6 @@ use FluidTYPO3\Flux\Utility\PathUtility;
 use FluidTYPO3\Flux\Utility\RecursiveArrayUtility;
 use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
@@ -47,6 +46,8 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  * @subpackage Provider
  */
 class AbstractProvider implements ProviderInterface {
+
+	const FORM_CLASS_PATTERN = '%s\\Form\\%s\\%sForm';
 
 	/**
 	 * @var array
@@ -130,6 +131,11 @@ class AbstractProvider implements ProviderInterface {
 	 * @var string|NULL
 	 */
 	protected $extensionKey = NULL;
+
+	/**
+	 * @var string|NULL
+	 */
+	protected $packageName = NULL;
 
 	/**
 	 * @var integer
@@ -267,6 +273,24 @@ class AbstractProvider implements ProviderInterface {
 	}
 
 	/**
+	 * If not-NULL is returned, the value is used as
+	 * object class name when creating a Form implementation
+	 * instance which can be returned as form instead of
+	 * reading from template or overriding the getForm() method.
+	 *
+	 * @param array $row
+	 * @return string
+	 */
+	protected function resolveFormClassName(array $row) {
+		$packageName = $this->getControllerPackageNameFromRecord($row);
+		$packageKey = str_replace('.', '\\', $packageName);
+		$controllerName = $this->getControllerNameFromRecord($row);
+		$action = $this->getControllerActionFromRecord($row);
+		$expectedClassName = sprintf(self::FORM_CLASS_PATTERN, $packageKey, $controllerName, ucfirst($action));
+		return TRUE === class_exists($expectedClassName) ? $expectedClassName : NULL;
+	}
+
+	/**
 	 * @param array $row
 	 * @return Form|NULL
 	 */
@@ -274,31 +298,45 @@ class AbstractProvider implements ProviderInterface {
 		if (NULL !== $this->form) {
 			return $this->form;
 		}
-		$templateSource = $this->getTemplateSource($row);
-		if (NULL === $templateSource) {
-			// Early return: no template file, no source - NULL expected.
-			return NULL;
-		}
-		$section = $this->getConfigurationSectionName($row);
-		$controllerName = 'Flux';
-		$formName = 'form';
-		$paths = $this->getTemplatePaths($row);
-		$extensionKey = $this->getExtensionKey($row);
-		$extensionName = ExtensionNamingUtility::getExtensionName($extensionKey);
-		$fieldName = $this->getFieldName($row);
-		$variables = array();
+		$formClassName = $this->resolveFormClassName($row);
+		if (NULL !== $formClassName) {
+			$form = $formClassName::create($row);
+		} else {
+			$templateSource = $this->getTemplateSource($row);
+			if (NULL === $templateSource) {
+				// Early return: no template file, no source - NULL expected.
+				return NULL;
+			}
+			$section = $this->getConfigurationSectionName($row);
+			$controllerName = 'Flux';
+			$formName = 'form';
+			$paths = $this->getTemplatePaths($row);
+			$extensionKey = $this->getExtensionKey($row);
+			$extensionName = ExtensionNamingUtility::getExtensionName($extensionKey);
+			$fieldName = $this->getFieldName($row);
+			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			$signature = str_replace('_', '', $extensionKey);
+			$variables = array(
+				'record' => $row,
+			);
+			if (TRUE === isset($typoScript['plugin.']['tx_' . $signature . '.']['settings.'])) {
+				$variables['settings'] = GeneralUtility::removeDotsFromTS($typoScript['plugin.']['tx_' . $signature . '.']['settings.']);
+			}
 
-		// Special case: when saving a new record variable $row[$fieldName] is already an array
-		// and must not be processed by the configuration service.
-		if (FALSE === is_array($row[$fieldName])) {
-			$variables = $this->configurationService->convertFlexFormContentToArray($row[$fieldName]);
+			// Special case: when saving a new record variable $row[$fieldName] is already an array
+			// and must not be processed by the configuration service.
+			if (FALSE === is_array($row[$fieldName])) {
+				$recordVariables = $this->configurationService->convertFlexFormContentToArray($row[$fieldName]);
+				$variables = GeneralUtility::array_merge_recursive_overrule($variables, $recordVariables);
+			}
+
+			$variables = GeneralUtility::array_merge_recursive_overrule($this->templateVariables, $variables);
+			$view = $this->configurationService->getPreparedExposedTemplateView($extensionName, $controllerName, $paths, $variables);
+
+			$view->setTemplateSource($templateSource);
+			$form = $view->getForm($section, $formName);
 		}
 
-		$variables['record'] = $row;
-		$variables = GeneralUtility::array_merge_recursive_overrule($this->templateVariables, $variables);
-		$view = $this->configurationService->getPreparedExposedTemplateView($extensionName, $controllerName, $paths, $variables);
-		$view->setTemplateSource($templateSource);
-		$form = $view->getForm($section, $formName);
 		$form = $this->setDefaultValuesInFieldsWithInheritedValues($form, $row);
 		return $form;
 	}
@@ -460,34 +498,13 @@ class AbstractProvider implements ProviderInterface {
 		$extensionKey = $this->getExtensionKey($row);
 		$extensionKey = ExtensionNamingUtility::getExtensionKey($extensionKey);
 		if (FALSE === is_array($paths)) {
-			$extensionKey = $this->getExtensionKey($row);
-			if (FALSE === empty($extensionKey) && TRUE === ExtensionManagementUtility::isLoaded($extensionKey)) {
+			if (FALSE === empty($extensionKey)) {
 				$paths = $this->configurationService->getViewConfigurationForExtensionName($extensionKey);
 			}
 		}
-
-		if (NULL !== $paths && FALSE === is_array($paths)) {
-			$this->configurationService->message('Template paths resolved for "' . $extensionKey . '" was not an array.', GeneralUtility::SYSLOG_SEVERITY_WARNING);
-			$paths = NULL;
-		}
-
-		if (NULL === $paths) {
-			$extensionKey = $this->getExtensionKey($row);
-			if (FALSE === empty($extensionKey) && TRUE === ExtensionManagementUtility::isLoaded($extensionKey)) {
-				$paths = array(
-					ExtensionManagementUtility::extPath($extensionKey, 'Resources/Private/Templates/'),
-					ExtensionManagementUtility::extPath($extensionKey, 'Resources/Private/Partials/'),
-					ExtensionManagementUtility::extPath($extensionKey, 'Resources/Private/Layouts/')
-				);
-			} else {
-				$paths = array();
-			}
-		}
-
 		if (TRUE === is_array($paths)) {
 			$paths = PathUtility::translatePath($paths);
 		}
-
 		return $paths;
 	}
 
@@ -738,8 +755,8 @@ class AbstractProvider implements ProviderInterface {
 	 * @return array
 	 */
 	public function getPreview(array $row) {
-		$templatePathAndFilename = $this->getTemplatePathAndFilename($row);
-		if (FALSE === file_exists($templatePathAndFilename)) {
+		$templateSource = $this->getTemplateSource($row);
+		if (TRUE === empty($templateSource)) {
 			return array(NULL, NULL, TRUE);
 		}
 		$extensionKey = $this->getExtensionKey($row);
@@ -752,9 +769,10 @@ class AbstractProvider implements ProviderInterface {
 		$label = LocalizationUtility::translate($formLabel, $extensionKey);
 		$variables['label'] = $label;
 		$variables['row'] = $row;
+		$variables['record'] = $row;
 
 		$view = $this->configurationService->getPreparedExposedTemplateView($extensionKey, 'Content', $paths, $variables);
-		$view->setTemplatePathAndFilename($templatePathAndFilename);
+		$view->setTemplateSource($templateSource);
 
 		$existingContentObject = $this->configurationManager->getContentObject();
 		$contentObject = new ContentObjectRenderer();
@@ -866,33 +884,57 @@ class AbstractProvider implements ProviderInterface {
 	}
 
 	/**
-	 * Stub: Override this when ConfigurationProvider is associated with a Controller
+	 * Stub: override this to return a controller action name associated with $row.
+	 * Default strategy: return base name of Provider class minus the "Provider" suffix.
+	 *
+	 * @param array $row
+	 * @return string
+	 */
+	public function getControllerNameFromRecord(array $row) {
+		$class = get_class($this);
+		$separator = FALSE !== strpos($class, '\\') ? '\\' : '_';
+		$base = array_pop(explode($separator, $class));
+		return substr($base, 0, -8);
+	}
+
+	/**
+	 * Stub: Get the extension key of the controller associated with $row
 	 *
 	 * @param array $row
 	 * @return string
 	 */
 	public function getControllerExtensionKeyFromRecord(array $row) {
-		return NULL;
+		return $this->extensionKey;
 	}
 
 	/**
-	 * Stub: Override this when ConfigurationProvider is associated with a Controller
+	 * Stub: Get the package name of the controller associated with $row
+	 *
+	 * @param array $row
+	 * @return string
+	 */
+	public function getControllerPackageNameFromRecord(array $row) {
+		return $this->packageName;
+	}
+
+	/**
+	 * Stub: Get the name of the controller action associated with $row
 	 *
 	 * @param array $row
 	 * @return string
 	 */
 	public function getControllerActionFromRecord(array $row) {
-		return NULL;
+		return 'default';
 	}
 
 	/**
-	 * Stub: implement this in Controllers which store the action in a record field.
+	 * Stub: Get a compacted controller name + action name string
 	 *
 	 * @param array $row
 	 * @return string
 	 */
 	public function getControllerActionReferenceFromRecord(array $row) {
-		return NULL;
+		return $this->getControllerNameFromRecord($row) . '->' . $this->getControllerActionFromRecord($row);
 	}
 
 	/**
