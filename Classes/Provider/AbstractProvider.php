@@ -24,15 +24,15 @@ namespace FluidTYPO3\Flux\Provider;
  *  This copyright notice MUST APPEAR in all copies of the script!
  *****************************************************************/
 
-use FluidTYPO3\Flux\Form\Container\Grid;
 use FluidTYPO3\Flux\Form;
+use FluidTYPO3\Flux\Form\Container\Grid;
 use FluidTYPO3\Flux\Form\FieldInterface;
 use FluidTYPO3\Flux\Service\ContentService;
 use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\Service\WorkspacesAwareRecordService;
+use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use FluidTYPO3\Flux\Utility\PathUtility;
 use FluidTYPO3\Flux\Utility\RecursiveArrayUtility;
-use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -300,7 +300,7 @@ class AbstractProvider implements ProviderInterface {
 		}
 		$formClassName = $this->resolveFormClassName($row);
 		if (NULL !== $formClassName) {
-			$form = $formClassName::create($row);
+			$form = call_user_func_array(array($formClassName, 'create'), array($row));
 		} else {
 			$templateSource = $this->getTemplateSource($row);
 			if (NULL === $templateSource) {
@@ -608,18 +608,21 @@ class AbstractProvider implements ProviderInterface {
 			$dom->preserveWhiteSpace = FALSE;
 			$dom->formatOutput = TRUE;
 			foreach ($dom->getElementsByTagName('field') as $fieldNode) {
+				/** @var \DOMElement $fieldNode */
 				if (TRUE === in_array($fieldNode->getAttribute('index'), $removals)) {
 					$fieldNode->parentNode->removeChild($fieldNode);
 				}
 			}
 			// Assign a hidden ID to all container-type nodes, making the value available in templates etc.
 			foreach ($dom->getElementsByTagName('el') as $containerNode) {
+				/** @var \DOMElement $containerNode */
 				$hasIdNode = FALSE;
 				if (0 < $containerNode->attributes->length) {
 					// skip <el> tags reserved for other purposes by attributes; only allow pure <el> tags.
 					continue;
 				}
 				foreach ($containerNode->childNodes as $fieldNodeInContainer) {
+					/** @var \DOMElement $fieldNodeInContainer */
 					if (FALSE === $fieldNodeInContainer instanceof \DOMElement) {
 						continue;
 					}
@@ -838,13 +841,7 @@ class AbstractProvider implements ProviderInterface {
 			$fields = $form->getFields();
 			$values = $this->getFlexFormValues($branch);
 			foreach ($fields as $field) {
-				$name = $field->getName();
-				$inherit = (TRUE === $field->getInherit());
-				$inheritEmpty = (TRUE === $field->getInheritEmpty());
-				$empty = (TRUE === empty($values[$name]) && $values[$name] !== '0' && $values[$name] !== 0);
-				if (FALSE === $inherit || (TRUE === $inheritEmpty && TRUE === $empty)) {
-					unset($values[$name]);
-				}
+				$values = $this->unsetInheritedValues($field, $values);
 			}
 			$data = RecursiveArrayUtility::merge($data, $values);
 		}
@@ -853,6 +850,22 @@ class AbstractProvider implements ProviderInterface {
 		}
 		self::$cache[$cacheKey] = $data;
 		return $data;
+	}
+
+	/**
+	 * @param FieldInterface $field
+	 * @param array $values
+	 * @return array
+	 */
+	protected function unsetInheritedValues(FieldInterface $field, $values) {
+		$name = $field->getName();
+		$inherit = (boolean) $field->getInherit();
+		$inheritEmpty = (boolean) $field->getInheritEmpty();
+		$empty = (TRUE === empty($values[$name]) && $values[$name] !== '0' && $values[$name] !== 0);
+		if (FALSE === $inherit || (TRUE === $inheritEmpty && TRUE === $empty)) {
+			unset($values[$name]);
+		}
+		return $values;
 	}
 
 	/**
@@ -1050,9 +1063,10 @@ class AbstractProvider implements ProviderInterface {
 	 *
 	 * @param string $methodName
 	 * @param mixed $id
+	 * @return void
 	 */
 	public function trackMethodCall($methodName, $id) {
-		return self::trackMethodCallWithClassName(get_class($this), $methodName, $id);
+		self::trackMethodCallWithClassName(get_class($this), $methodName, $id);
 	}
 
 	/**
@@ -1077,6 +1091,7 @@ class AbstractProvider implements ProviderInterface {
 	 * @param string $className
 	 * @param string $methodName
 	 * @param mixed $id
+	 * @return void
 	 */
 	protected function trackMethodCallWithClassName($className, $methodName, $id) {
 		$cacheKey = $className . $methodName . $id;
